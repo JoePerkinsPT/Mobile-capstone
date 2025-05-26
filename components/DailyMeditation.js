@@ -44,7 +44,7 @@ const DailyMeditation = ({ meditations }) => {
         ) : (
           data?.map((meditation) => (
             <TouchableOpacity
-              key={`meditation-${meditation.id}`}
+              key={`meditation-${meditation.title}-${meditation.duration}`}
               style={styles.cardContainer}
               onPress={() => handleNavigate(meditation)}
             >
