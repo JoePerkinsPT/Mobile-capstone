@@ -21,9 +21,23 @@ const PopularMeditation = () => {
 
   const [selectedMeditation, setselectedMeditation] = useState();
 
+  const navigateToDetail = (item) => {
+    router.push({
+      pathname: "/detail",
+      params: {
+        title: item.title,
+        description: item.shortDescription,
+        duration: item.duration,
+        image: item.image,
+        target: item.target,
+        instructions: item.instructions || "Find a quiet place, sit comfortably, and follow the guided meditation."
+      }
+    });
+  };
+
   const handleCardPress = (item) => {
-    router.push(`/meditation-details/${item.id}`);
     setselectedMeditation(item.id);
+    navigateToDetail(item);
   };
 
   const renderMeditationCard = ({ item }) => (

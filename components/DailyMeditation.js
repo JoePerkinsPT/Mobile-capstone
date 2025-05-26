@@ -17,8 +17,18 @@ const DailyMeditation = ({ meditations }) => {
     query: "",
     num_pages: "1",
   });
-  const handleNavigate = (id) => {
-    router.push(`/meditation-details/${id}`);
+  const handleNavigate = (meditation) => {
+    router.push({
+      pathname: "/detail",
+      params: {
+        title: meditation.title,
+        description: meditation.description,
+        duration: meditation.duration,
+        image: meditation.image,
+        target: meditation.target,
+        instructions: meditation.instructions || "Find a quiet place, sit comfortably, and follow the guided meditation."
+      }
+    });
   };
   const data = meditations || bestMeditations;
   return (
@@ -36,7 +46,7 @@ const DailyMeditation = ({ meditations }) => {
             <TouchableOpacity
               key={`meditation-${meditation.id}`}
               style={styles.cardContainer}
-              onPress={() => handleNavigate(meditation.id)}
+              onPress={() => handleNavigate(meditation)}
             >
               <View style={styles.logoContainer}>
                 <Image
