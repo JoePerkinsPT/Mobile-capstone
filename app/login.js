@@ -7,31 +7,85 @@ import { COLORS, icons, SHADOWS } from "../constants";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
   const router = useRouter();
 
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!validateEmail(email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
+
+    if (!password) {
+      newErrors.password = "Password is required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert("Validation Error", "Please fill in all fields.");
+    if (!validateForm()) {
       return;
     }
-    const userDetails = { email, password, token: "sample-token" };
-    console.log('userDetails', userDetails);
+
     try {
       const detailsDatafromSignup = await AsyncStorage.getItem("userDetails");
-      if (detailsDatafromSignup) {
-        const parsedDetails = JSON.parse(detailsDatafromSignup);
-        if (userDetails.email === parsedDetails.email && userDetails.password === parsedDetails.password) {
-          router.push("/home");
-        } else {
-          Alert.alert("Error", "Incorrect email or password.");
-          alert("Error Incorrect email or password.");
-        }
+      
+      if (!detailsDatafromSignup) {
+        Alert.alert(
+          "Error",
+          "No account found. Please sign up first.",
+          [
+            {
+              text: "Sign Up",
+              onPress: () => router.push("/signup")
+            },
+            {
+              text: "Cancel",
+              style: "cancel"
+            }
+          ]
+        );
+        return;
+      }
+
+      const parsedDetails = JSON.parse(detailsDatafromSignup);
+      
+      if (email === parsedDetails.email && password === parsedDetails.password) {
+        // Save the logged-in user's details
+        await AsyncStorage.setItem("userDetails", JSON.stringify(parsedDetails));
+        router.push("/home");
       } else {
-        Alert.alert("Error", "No user details found in AsyncStorage.");
-        alert("Error No user details found in AsyncStorage.");
+        Alert.alert(
+          "Login Failed",
+          "Incorrect email or password. Please try again.",
+          [
+            {
+              text: "Forgot Password",
+              onPress: () => {
+                // TODO: Implement forgot password functionality
+                Alert.alert("Coming Soon", "Password reset functionality will be available soon.");
+              }
+            },
+            {
+              text: "Try Again",
+              style: "cancel"
+            }
+          ]
+        );
       }
     } catch (error) {
-      console.error("Error accessing AsyncStorage", error);
+      console.error("Login error:", error);
+      Alert.alert("Error", "An error occurred during login. Please try again.");
     }
   };
 
@@ -41,9 +95,7 @@ const Login = () => {
         options={{
           headerStyle: { backgroundColor: COLORS.lightWhite },
           headerShadowVisible: false,
-          headerLeft: () => (
-            <></>
-          ),
+          headerLeft: () => <></>,
           headerTitle: "",
         }}
       />
@@ -74,28 +126,46 @@ const Login = () => {
             <TextInput
               style={{
                 borderWidth: 1,
-                borderColor: "#ccc",
+                borderColor: errors.email ? "red" : "#ccc",
                 padding: 10,
                 borderRadius: 5,
-                marginBottom: 10,
+                marginBottom: 5,
               }}
               value={email}
-              onChangeText={setEmail}
+              onChangeText={(text) => {
+                setEmail(text);
+                setErrors({ ...errors, email: null });
+              }}
               placeholder="Email"
+              keyboardType="email-address"
+              autoCapitalize="none"
             />
+            {errors.email && (
+              <Text style={{ color: "red", fontSize: 12, marginBottom: 10 }}>
+                {errors.email}
+              </Text>
+            )}
             <TextInput
               style={{
                 borderWidth: 1,
-                borderColor: "#ccc",
+                borderColor: errors.password ? "red" : "#ccc",
                 padding: 10,
                 borderRadius: 5,
-                marginBottom: 10,
+                marginBottom: 5,
               }}
               value={password}
               secureTextEntry={true}
-              onChangeText={setPassword}
+              onChangeText={(text) => {
+                setPassword(text);
+                setErrors({ ...errors, password: null });
+              }}
               placeholder="Password"
             />
+            {errors.password && (
+              <Text style={{ color: "red", fontSize: 12, marginBottom: 10 }}>
+                {errors.password}
+              </Text>
+            )}
           </View>
           <TouchableOpacity
             style={{

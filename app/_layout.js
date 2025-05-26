@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { NavigationContainer } from "@react-navigation/native";
 import { Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import { ActivityIndicator, View } from "react-native";
@@ -19,18 +18,21 @@ const Layout = () => {
     DMRegular: require("../assets/fonts/DMSans-Regular.ttf"),
   });
 
+  const checkLoginState = async () => {
+    try {
+      console.log("Checking login state...");
+      const user = await AsyncStorage.getItem("userDetails");
+      console.log("User details from storage:", user);
+      setIsLoggedIn(!!user);
+    } catch (error) {
+      console.error("Error checking login state:", error);
+      setIsLoggedIn(false);
+    }
+    setIsLoading(false);
+  };
+
   useEffect(() => {
-    const checkLoginState = async () => {
-      try {
-        const user = await AsyncStorage.getItem("userDetails");
-        if (user) {
-          setIsLoggedIn(true);
-        }
-      } catch (error) {
-        console.error("Error checking login state:", error);
-      }
-      setIsLoading(false);
-    };
+    // Check login state on mount
     checkLoginState();
   }, []);
 
@@ -41,6 +43,8 @@ const Layout = () => {
       </View>
     );
   }
+
+  console.log("Current login state:", isLoggedIn);
 
   return (
     <ThemeProvider>

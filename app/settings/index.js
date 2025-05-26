@@ -4,7 +4,8 @@ import { useRouter } from "expo-router";
 import { COLORS, SHADOWS, SIZES } from "../../constants";
 import { useTheme } from "../../context/ThemeProvider";
 import ScreenHeaderBtn from "../../components/ScreenHeaderBtn";
-import { userStorage } from "../../utils/storage";
+import { userStorage, favoritesStorage, notificationsStorage } from "../../utils/storage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SettingsMenu = () => {
   const router = useRouter();
@@ -12,19 +13,38 @@ const SettingsMenu = () => {
   const isDarkMode = theme === "dark";
 
   const handleLogout = async () => {
+    console.log("Logout button pressed");
     Alert.alert(
       "Logout",
       "Are you sure you want to logout?",
       [
         {
           text: "Cancel",
-          style: "cancel"
+          style: "cancel",
+          onPress: () => console.log("Logout cancelled")
         },
         {
           text: "Logout",
           onPress: async () => {
-            await userStorage.clearUserDetails();
-            router.replace("/login");
+            console.log("Logout confirmed, starting logout process");
+            try {
+              // Clear all user-related data
+              console.log("Clearing user details...");
+              await userStorage.clearUserDetails();
+              console.log("Clearing favorites...");
+              await favoritesStorage.clearFavorites();
+              console.log("Clearing notifications...");
+              await notificationsStorage.clearNotifications();
+              console.log("Removing userDetails from AsyncStorage...");
+              await AsyncStorage.removeItem("userDetails");
+              
+              console.log("All data cleared, navigating to login...");
+              // Navigate to login page
+              router.push("/login");
+            } catch (error) {
+              console.error("Error during logout:", error);
+              Alert.alert("Error", "Failed to logout. Please try again.");
+            }
           }
         }
       ]
@@ -110,7 +130,11 @@ const SettingsMenu = () => {
             borderRadius: SIZES.small,
             ...SHADOWS.medium,
           }}
-          onPress={handleLogout}
+          onPress={() => {
+            console.log("Logout button pressed - direct handler");
+            handleLogout();
+          }}
+          activeOpacity={0.7}
         >
           <Text
             style={{
