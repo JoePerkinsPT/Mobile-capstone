@@ -10,6 +10,7 @@ import DailyQuote from "../components/DailyQuote";
 
 const Home = () => {
   const [userDetails, setUserDetails] = useState(null);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
     loadUserDetails();
@@ -32,10 +33,10 @@ const Home = () => {
           }}
           testID="screensDisplay"
         >
-          <Welcome userDetails={userDetails ? JSON.parse(userDetails) : null} />
-          <DailyQuote />
-          <PopularMeditation />
-          <DailyMeditation />
+          <Welcome userDetails={userDetails ? JSON.parse(userDetails) : null} isDarkMode={isDarkMode} />
+          <DailyQuote isDarkMode={isDarkMode} />
+          <PopularMeditation isDarkMode={isDarkMode} />
+          <DailyMeditation isDarkMode={isDarkMode} />
         </View>
       </ScrollView>
     </SafeAreaView>

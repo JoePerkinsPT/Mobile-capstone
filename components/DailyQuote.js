@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { COLORS, FONT, SIZES, SHADOWS } from '../constants';
 
-const DailyQuote = () => {
+const DailyQuote = ({ isDarkMode }) => {
   const [quote, setQuote] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -27,12 +28,21 @@ const DailyQuote = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={[
+      styles.container,
+      { 
+        backgroundColor: isDarkMode ? COLORS.darkBackground : COLORS.white,
+        borderColor: isDarkMode ? COLORS.gray2 : COLORS.gray
+      }
+    ]}>
       {loading ? (
-        <ActivityIndicator size="small" color="#0000ff" />
+        <ActivityIndicator size="small" color={COLORS.primary} />
       ) : (
         <>
-          <Text style={styles.quoteText}>"{quote}"</Text>
+          <Text style={[
+            styles.quoteText,
+            { color: isDarkMode ? COLORS.white : COLORS.gray }
+          ]}>"{quote}"</Text>
         </>
       )}
     </View>
@@ -45,18 +55,19 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#ccc',
     borderTopRightRadius: 10,
     borderBottomLeftRadius: 10,
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 5,
-    marginVertical: 10,
+    paddingHorizontal: SIZES.medium,
+    paddingVertical: SIZES.small,
+    marginHorizontal: SIZES.medium,
+    marginVertical: SIZES.small,
+    ...SHADOWS.small,
   },
   quoteText: {
-    fontSize: 18,
-    fontStyle: 'italic',
-    marginBottom: 10,
+    fontSize: SIZES.medium,
+    fontFamily: FONT.italic,
+    marginBottom: SIZES.small,
     textAlign: 'center',
   },
 }); 
