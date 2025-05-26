@@ -45,6 +45,7 @@ const SettingsMenu = () => {
             padding: SIZES.medium,
             backgroundColor: isDarkMode ? COLORS.lightWhite : COLORS.darkBackground,
             borderRadius: SIZES.small,
+            marginBottom: SIZES.medium,
             ...SHADOWS.medium,
           }}
           onPress={() => router.push("/settings/Favourites")}
@@ -57,6 +58,26 @@ const SettingsMenu = () => {
             }}
           >
             My Favourites
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={{
+            padding: SIZES.medium,
+            backgroundColor: isDarkMode ? COLORS.lightWhite : COLORS.darkBackground,
+            borderRadius: SIZES.small,
+            ...SHADOWS.medium,
+          }}
+          onPress={() => router.push("/settings/DailyReminders")}
+        >
+          <Text
+            style={{
+              color: isDarkMode ? COLORS.lightText : COLORS.darkText,
+              fontSize: SIZES.medium,
+              fontFamily: "DMBold",
+            }}
+          >
+            Daily Reminders
           </Text>
         </TouchableOpacity>
       </View>
