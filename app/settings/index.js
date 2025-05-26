@@ -1,14 +1,35 @@
-import { Text, SafeAreaView, TouchableOpacity, View } from "react-native";
+import { Text, SafeAreaView, TouchableOpacity, View, Alert } from "react-native";
 import React from "react";
 import { useRouter } from "expo-router";
 import { COLORS, SHADOWS, SIZES } from "../../constants";
 import { useTheme } from "../../context/ThemeProvider";
 import ScreenHeaderBtn from "../../components/ScreenHeaderBtn";
+import { userStorage } from "../../utils/storage";
 
 const SettingsMenu = () => {
   const router = useRouter();
   const { theme } = useTheme();
   const isDarkMode = theme === "dark";
+
+  const handleLogout = async () => {
+    Alert.alert(
+      "Logout",
+      "Are you sure you want to logout?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        {
+          text: "Logout",
+          onPress: async () => {
+            await userStorage.clearUserDetails();
+            router.replace("/login");
+          }
+        }
+      ]
+    );
+  };
 
   return (
     <SafeAreaView
@@ -66,6 +87,7 @@ const SettingsMenu = () => {
             padding: SIZES.medium,
             backgroundColor: isDarkMode ? COLORS.lightWhite : COLORS.darkBackground,
             borderRadius: SIZES.small,
+            marginBottom: SIZES.medium,
             ...SHADOWS.medium,
           }}
           onPress={() => router.push("/settings/DailyReminders")}
@@ -78,6 +100,27 @@ const SettingsMenu = () => {
             }}
           >
             Daily Reminders
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={{
+            padding: SIZES.medium,
+            backgroundColor: "#FE7654",
+            borderRadius: SIZES.small,
+            ...SHADOWS.medium,
+          }}
+          onPress={handleLogout}
+        >
+          <Text
+            style={{
+              color: COLORS.lightWhite,
+              fontSize: SIZES.medium,
+              fontFamily: "DMBold",
+              textAlign: "center",
+            }}
+          >
+            Logout
           </Text>
         </TouchableOpacity>
       </View>
